@@ -2,7 +2,7 @@
 
 This Script is to automate the task of archiving the Logs of Wazuh Siem from the on prem server/instace to an arvhival class GCP storage bucket.
 
-For details of generatting Service account token or Configuring access to GCP bucket please follow all the instructions on : Cyberviewpoint.com
+For details of generatting Service account token or Configuring access to GCP bucket please follow all the instructions on : https://www.cyberviewpoint.com/2023/09/automated-wazuh-log-archival-on-gcp.html
 
 ## How to:
 
