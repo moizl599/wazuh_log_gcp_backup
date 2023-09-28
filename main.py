@@ -7,26 +7,28 @@ import os
 import shutil
 from gcloud import storage
 from oauth2client.service_account import ServiceAccountCredentials
+import configparser
 
-#gcloud data
+# Read configuration from config.ini
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+# Get credentials and paths from config
 credentials_dict = {
-        'type': 'service_account',
-    "project_id": "<project_id>",
-    "private_key_id": "<project_key>",
-    "private_key":"<private_key>",
-    "client_email": "<client_name>",
-    "client_id": "<client_id>",
+    'type': config.get('Credentials', 'type'),
+    'project_id': config.get('Credentials', 'project_id'),
+    'private_key_id': config.get('Credentials', 'private_key_id'),
+    'private_key': config.get('Credentials', 'private_key'),
+    'client_email': config.get('Credentials', 'client_email'),
+    'client_id': config.get('Credentials', 'client_id'),
 }
+destination_files = config.get('Paths', 'destination_files')
+ziparchivefile = config.get('Paths', 'ziparchivefile')
 
-credentials = ServiceAccountCredentials.from_json_keyfile_dict(
-    credentials_dict
-)
-
-client = storage.Client(credentials=credentials, project='<project-ID>')
-
-# create "a bucket:
+# Initialize client
+credentials = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict)
+client = storage.Client(credentials=credentials, project=credentials_dict['project_id'])
 bucket = client.get_bucket("wazuh_log_archive1")
-
 
 
 def log_file_path_generator():
@@ -59,15 +61,13 @@ def archive_files(dir_name):
     shutil.make_archive(output_filename, 'zip', dir_name)
     filename = f'{log_day}-archive.zip'
     blob = bucket.blob(filename)
-    blob.upload_from_filename(f'/<outputfile_location>/{log_day}-archive.zip')
+    blob.upload_from_filename(f'/{destination_files}/{log_day}-archive.zip')
 def cleanup(cplogfiles,ziparchive):
     os.system(f'rm -rf {cplogfiles}/*')
     os.system(f'rm -rf {ziparchive}/*')
 
 def main():
     source_file = log_file_path_generator()
-    destination_files = '<outputfile_location>'
-    ziparchivefile = '<archivefile_location>'
     os.system(f'cp {source_file} {destination_files}')
     archive_files(destination_files)
     cleanup(destination_files,ziparchivefile)
