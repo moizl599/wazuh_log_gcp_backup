@@ -7,8 +7,12 @@ For details of generatting Service account token or Configuring access to GCP bu
 ## How to:
 
 ### 1) the script executes by setting a cron job on the Wazuh Server.
+#### Open Cron Tab
 ```sh
     crontab -e
+```
+#### set the follwoing command
+```sh
     00 5 * * * /usr/bin/python3 /root/scripts/archivemodule/main.py
 ```
 ### note: I have set the task to run every day at 1:00 AM ETC , you can set that as per your time zone
